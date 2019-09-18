@@ -1,7 +1,9 @@
-FROM resin/rpi-raspbian:latest
+FROM balenalib/rpi-raspbian:latest
+#FROM arm32v7/debian
+#FROM resin/rpi-raspian:latest
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-   wget unzip build-essential cmake pkg-config \
+   wget unzip build-essential cmake pkg-config apt-utils \
    libjpeg-dev libtiff5-dev libjasper-dev libpng-dev \
    libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
    libxvidcore-dev libx264-dev \
@@ -9,25 +11,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
    libgdk-pixbuf2.0-dev libpango1.0-dev \
    libgtk2.0-dev libgtk-3-dev \
    libatlas-base-dev gfortran \
-   llibhdf5-dev libhdf5-serial-dev libhdf5-103 \
-   libqtgui4 libqtwebkit4 libqt4-test python3-pyqt5 \
+   libhdf5-dev libhdf5-serial-dev libhdf5-103 \
+   libqtgui4 libqtwebkit4 libqt4-test python3 python3-pyqt5 \
    python3-dev python3-pip
 
-RUN apt-get purge wolfram-engine purge libreoffice* clean autoremove
+#RUN apt-get purge wolfram-engine purge libreoffice* clean autoremove
 
 WORKDIR opencv
 
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN sudo python get-pip.py
-RUN sudo python3 get-pip.py
-RUN sudo rm -rf ~/.cache/pip
+#RUN wget https://bootstrap.pypa.io/get-pip.py
+#RUN sudo python get-pip.py
+#RUN sudo python3 get-pip.py
+#RUN sudo rm -rf ~/.cache/pip
 
+RUN apt-get install python3
 RUN apt-get install pipenv
+RUN pipenv install numpy
+RUN pipenv shell
 
 #RUN sudo pip install virtualenv virtualenvwrapper
 
-RUN source appendBash.txt
-RUN mkvirtualenv cv -p python3
+#RUN source appendBash.txt
+# virtualenv and virtualenvwrapper
+
 
 RUN wget -O opencv.zip https://github.com/Itseez/opencv/archive/4.1.1.zip
 RUN unzip opencv.zip
@@ -40,7 +46,6 @@ RUN unzip opencv_contrib.zip
 # RUN rm -rf ~/.cache/pip
 # RUN source ./bin/virtualenvwrapper
 
-RUN pip3 install numpy
 
 #Open your /etc/dphys-swapfile  and then edit the CONF_SWAPSIZE  variable:
 #CONF_SWAPSIZE=102
@@ -51,7 +56,7 @@ RUN /etc/init.d/dphys-swapfile stop
 RUN /etc/init.d/dphys-swapfile start
 
 #RUN workon cv
-
+RUN pipenv shell
 
 WORKDIR opencv-4.1.1
 RUN mkdir build
