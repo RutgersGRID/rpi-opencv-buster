@@ -2,6 +2,8 @@ FROM balenalib/rpi-raspbian:latest
 #FROM arm32v7/debian
 #FROM resin/rpi-raspian:latest
 
+ARG OPENCV_VER=4.1.1 
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
    wget unzip build-essential cmake pkg-config apt-utils \
    libjpeg-dev libtiff5-dev libjasper-dev libpng-dev \
@@ -15,37 +17,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
    libqtgui4 libqtwebkit4 libqt4-test python3 python3-pyqt5 \
    python3-dev python3-pip
 
-#RUN apt-get purge wolfram-engine purge libreoffice* clean autoremove
 
 WORKDIR opencv
-
-#RUN wget https://bootstrap.pypa.io/get-pip.py
-#RUN sudo python get-pip.py
-#RUN sudo python3 get-pip.py
-#RUN sudo rm -rf ~/.cache/pip
-
 RUN apt-get install python3
-RUN apt-get install pipenv
-RUN pipenv install numpy
-RUN pipenv shell
 
-#RUN sudo pip install virtualenv virtualenvwrapper
+RUN pip3 install numpy
 
-#RUN source appendBash.txt
-# virtualenv and virtualenvwrapper
-
-
-RUN wget -O opencv.zip https://github.com/Itseez/opencv/archive/4.1.1.zip
+RUN wget -O opencv.zip https://github.com/Itseez/opencv/archive/${OPENCV_VER}.zip
 RUN unzip opencv.zip
 
-RUN wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/4.1.1.zip
+RUN wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/${OPENCV_VER}.zip
 RUN unzip opencv_contrib.zip
-
-# Removing the virtualenvwrapper portion for now
-# RUN pip install virtualenv virtualenvwrapper
-# RUN rm -rf ~/.cache/pip
-# RUN source ./bin/virtualenvwrapper
-
+RUN mv opencv-${OPENCV_VER} opencv
+RUN mv opencv_contrib-${OPENCV_VER} opencv_contrib
 
 #Open your /etc/dphys-swapfile  and then edit the CONF_SWAPSIZE  variable:
 #CONF_SWAPSIZE=102
@@ -55,10 +39,8 @@ RUN sed -i 's/CONF_SWAPSIZE=100$/CONF_SWAPSIZE=1024/' /etc/dphys-swapfile
 RUN /etc/init.d/dphys-swapfile stop
 RUN /etc/init.d/dphys-swapfile start
 
-#RUN workon cv
-RUN pipenv shell
 
-WORKDIR opencv-4.1.1
+WORKDIR opencv
 RUN mkdir build
 WORKDIR build
 RUN  cmake -D CMAKE_BUILD_TYPE=RELEASE \
@@ -73,19 +55,23 @@ RUN  cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D BUILD_EXAMPLES=OFF ..
 
 
-
-
 RUN make -j4
 RUN make install
 RUN ldconfig
 # TODO: Test that opencv is installed properly
 
 RUN cd /usr/local/lib/python3.7/site-packages/cv2/python-3.7
-RUN sudo mv cv2.cpython-37m-arm-linux-gnueabihf.so cv2.so
+RUN sudo cp cv2.cpython-37m-arm-linux-gnueabihf.so cv2.so
 RUN cd ~/.virtualenvs/cv/lib/python3.7/site-packages/
 RUN ln -s /usr/local/lib/python3.7/site-packages/cv2/python-3.7/cv2.so cv2.so
 
+RUN tar rpi-openv-${OPENCV_VR}.tar.gz  cv2.cpython-37m-arm-linux-gnueabihf.so 
 
-# Clean up and reduce the image size by deleting files
-WORKDIR /
-RUN rm -rf /opencv
+RUN echo "\
+$ docker rianders:/rpi-opencv cp cv2.cpython-37m-arm-linux-gnueabihf.so cv2.so \
+$ sudo cp  cv2.cpython-37m-arm-linux-gnueabihf.so /usr/local/lib/python3.7/site-packages/cv2/python-3.7/cv2.so \
+$ cd ~/.virtualenvs/cv/lib/python3.7/site-packages/ \
+$ ln -s /usr/local/lib/python3.7/site-packages/cv2/python-3.7/cv2.so cv2.so \
+"
+
+RUN echo "DONE"

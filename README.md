@@ -2,6 +2,12 @@
 
 Opencv Docker for Raspberry PI
 
+# Lessons Learned
+* Virtual environments for Python not as important
+* Pipenv fails when you can't guarantee a python version
+* Everything is now done as a root user which is normal in Docker
+* Maybe, for Python specific projects "poetry" would work better
+
 Based on build process documented at PyimageSearch.com
 
 https://www.pyimagesearch.com/2019/09/16/install-opencv-4-on-raspberry-pi-4-and-raspbian-buster/
