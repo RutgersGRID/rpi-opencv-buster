@@ -56,16 +56,19 @@ RUN  cmake -D CMAKE_BUILD_TYPE=RELEASE \
 
 
 RUN make -j4
+RUN pwd
 RUN make install
 RUN ldconfig
 # TODO: Test that opencv is installed properly
 
-RUN cd /usr/local/lib/python3.7/site-packages/cv2/python-3.7
-RUN sudo cp cv2.cpython-37m-arm-linux-gnueabihf.so cv2.so
-RUN cd ~/.virtualenvs/cv/lib/python3.7/site-packages/
-RUN ln -s /usr/local/lib/python3.7/site-packages/cv2/python-3.7/cv2.so cv2.so
-
-RUN tar rpi-openv-${OPENCV_VR}.tar.gz  cv2.cpython-37m-arm-linux-gnueabihf.so 
+#RUN cd /usr/local/lib/python3.7/site-packages/cv2/python-3.7
+#RUN sudo cp cv2.cpython-37m-arm-linux-gnueabihf.so cv2.so
+#RUN cd ~/.virtualenvs/cv/lib/python3.7/site-packages/
+#RUN ln -s /usr/local/lib/python3.7/site-packages/cv2/python-3.7/cv2.so cv2.so
+RUN find /usr/local/  -name cv2.cpython-*
+RUN ls /usr/local/share/opencv4/
+RUN ls /usr/local/lib/python3.7/site-packages/cv2/python-3.7/
+RUN tar cvzf rpi-openv-${OPENCV_VR}.tar.gz  /usr/local/lib/python3.7/site-packages/cv2/python-3.7/cv2.cpython-37m-arm-linux-gnueabihf.so 
 
 RUN echo "\
 $ docker rianders:/rpi-opencv cp cv2.cpython-37m-arm-linux-gnueabihf.so cv2.so \
