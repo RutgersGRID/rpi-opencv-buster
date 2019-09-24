@@ -33,5 +33,18 @@ https://blog.docker.com/2019/03/happy-pi-day-docker-raspberry-pi/
 `systemctl start docker.service`
 
 `docker info`
+ ====
+
+`docker pull rianders/rpi-opencv:latest`
+
+Clean up the intermediary builds:
+`docker system prune`
+
+`docker build -t rianders/rpi-opencv .`
+`docker run -it rianders/rpi-opencv /bin/bash`
+
+Copy the files from the docker:
+`docker cp $1:./rpi-openv-*.tar.gz  .`
+
 
 

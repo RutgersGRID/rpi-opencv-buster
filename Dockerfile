@@ -66,8 +66,10 @@ RUN ldconfig
 #RUN cd ~/.virtualenvs/cv/lib/python3.7/site-packages/
 #RUN ln -s /usr/local/lib/python3.7/site-packages/cv2/python-3.7/cv2.so cv2.so
 
+
 RUN find /usr/local/  -name cv2.cpython-*
-RUN tar cvzf rpi-openv-${OPENCV_VR}.tar.gz  /usr/local/lib/python3.7/dist-packages/cv2/python-3.7/cv2.cpython-37m-arm-linux-gnueabihf.so
+RUN ls /usr/local/lib/python3.7/dist-packages/cv2/
+RUN tar cvzf rpi-opencv-${OPENCV_VER}.tar.gz -C /usr/local/lib/python3.7/dist-packages/  cv2 
  
 
 RUN echo "\
