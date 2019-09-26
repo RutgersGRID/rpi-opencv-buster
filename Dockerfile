@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
    libatlas-base-dev gfortran \
    libhdf5-dev libhdf5-serial-dev libhdf5-103 \
    libqtgui4 libqtwebkit4 libqt4-test python3 python3-pyqt5 \
-   python3-dev python3-pip
+   python3-dev python3-pip time vim
 
 
 WORKDIR opencv
@@ -43,7 +43,7 @@ RUN /etc/init.d/dphys-swapfile start
 WORKDIR opencv
 RUN mkdir build
 WORKDIR build
-RUN  cmake -D CMAKE_BUILD_TYPE=RELEASE \
+RUN  time cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D CMAKE_INSTALL_PREFIX=/usr/local \
     -D OPENCV_EXTRA_MODULES_PATH=/opencv/opencv_contrib/modules \
     -D ENABLE_NEON=ON \
@@ -52,12 +52,13 @@ RUN  cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D INSTALL_PYTHON_EXAMPLES=OFF \
     -D OPENCV_ENABLE_NONFREE=ON \
     -D CMAKE_SHARED_LINKER_FLAGS=-latomic \
-    -D BUILD_EXAMPLES=OFF ..
-
+    -D PACK_BINARY_DEB=ON \
+    -D BUILD_EXAMPLES=OFF .. 
 
 RUN make -j4
 RUN pwd
-RUN make install
+RUN time make install
+RUN time make package -j4
 RUN ldconfig
 # TODO: Test that opencv is installed properly
 
@@ -68,8 +69,9 @@ RUN ldconfig
 
 
 RUN find /usr/local/  -name cv2.cpython-*
-RUN ls /usr/local/lib/python3.7/dist-packages/cv2/
-RUN tar cvzf rpi-opencv-${OPENCV_VER}.tar.gz -C /usr/local/lib/python3.7/dist-packages/  cv2 
+RUN find /usr/local/ -name libopencv_hdf.so.4.1
+#RUN ls /usr/local/lib/python3.7/dist-packages/cv2/
+#RUN tar cvzf rpi-opencv-${OPENCV_VER}.tar.gz -C /usr/local/lib/python3.7/dist-packages/  cv2 
  
 
 RUN echo "\
