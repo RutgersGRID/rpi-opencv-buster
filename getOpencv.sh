@@ -9,4 +9,6 @@ echo "docker cp $1:/usr/local/lib/python3.7/dist-packages/cv2/python-3.7/cv2.cpy
 
 #docker cp $1:/usr/local/lib/python3.7/dist-packages/cv2/python-3.7/cv2.cpython-37m-arm-linux-gnueabihf.so .
 
-docker cp $1:/opencv/opencv/build/rpi-opencv-$2.tar.gz  .
+#docker cp $1:/opencv/opencv/build/rpi-opencv-$2.tar.gz  .
+
+docker cp $1:/opencv/opencv/build/OpenCV-unknown-armv7l.tar.gz .

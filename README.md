@@ -47,4 +47,6 @@ Copy the files from the docker:
 `docker cp $1:./rpi-openv-*.tar.gz  .`
 
 
+## Extract and Install
+`sudo tar xvzf OpenCV-unknown-armv7l.tar.gz -C /usr/local/ --strip=1`
 
