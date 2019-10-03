@@ -1,6 +1,5 @@
-FROM balenalib/rpi-raspbian:latest
-#FROM arm32v7/debian
-#FROM resin/rpi-raspian:latest
+FROM balenalib/rpi-raspbian:latest as build-env
+#FROM arm32v7/alpine as build-env
 
 ARG OPENCV_VER=4.1.1 
 
@@ -39,10 +38,12 @@ RUN sed -i 's/CONF_SWAPSIZE=100$/CONF_SWAPSIZE=1024/' /etc/dphys-swapfile
 RUN /etc/init.d/dphys-swapfile stop
 RUN /etc/init.d/dphys-swapfile start
 
-
 WORKDIR opencv
 RUN mkdir build
 WORKDIR build
+RUN pwd
+RUN ls ..
+
 RUN  time cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D CMAKE_INSTALL_PREFIX=/usr/local \
     -D OPENCV_EXTRA_MODULES_PATH=/opencv/opencv_contrib/modules \
@@ -57,6 +58,10 @@ RUN  time cmake -D CMAKE_BUILD_TYPE=RELEASE \
 
 RUN make -j4
 RUN pwd
+
+FROM balenalib/rpi-raspbian:latest
+WORKDIR /opencv
+COPY --from=build-env /opencv/opencv/build /build
 RUN time make install
 RUN time make package -j4
 RUN ldconfig
