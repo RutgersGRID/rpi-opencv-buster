@@ -14,13 +14,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
    libatlas-base-dev gfortran \
    libhdf5-dev libhdf5-serial-dev libhdf5-103 \
    libqtgui4 libqtwebkit4 libqt4-test python3 python3-pyqt5 \
-   python3-dev python3-pip time vim
+   python3-dev python3-pip time vim file
 
 
-WORKDIR opencv
 RUN apt-get install python3
-
 RUN pip3 install numpy
+
+WORKDIR opencvwork
 
 RUN wget -O opencv.zip https://github.com/Itseez/opencv/archive/${OPENCV_VER}.zip
 RUN unzip opencv.zip
@@ -38,9 +38,7 @@ RUN sed -i 's/CONF_SWAPSIZE=100$/CONF_SWAPSIZE=1024/' /etc/dphys-swapfile
 RUN /etc/init.d/dphys-swapfile stop
 RUN /etc/init.d/dphys-swapfile start
 
-WORKDIR opencv
-RUN mkdir build
-WORKDIR build
+WORKDIR opencv/build
 RUN pwd
 RUN ls ..
 
@@ -53,15 +51,16 @@ RUN  time cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D INSTALL_PYTHON_EXAMPLES=OFF \
     -D OPENCV_ENABLE_NONFREE=ON \
     -D CMAKE_SHARED_LINKER_FLAGS=-latomic \
-    -D PACK_BINARY_DEB=ON \
+    -D CPACK_BINARY_DEB=ON \
+    -D CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS=ON \
     -D BUILD_EXAMPLES=OFF .. 
 
 RUN make -j4
 RUN pwd
 
-FROM balenalib/rpi-raspbian:latest
-WORKDIR /opencv
-COPY --from=build-env /opencv/opencv/build /build
+#FROM build-env
+#WORKDIR /opencv
+#COPY --from=build-env /opencv/opencv/build /build
 RUN time make install
 RUN time make package -j4
 RUN ldconfig
