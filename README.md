@@ -41,6 +41,7 @@ Clean up the intermediary builds:
 `docker system prune`
 
 `docker build -t rianders/rpi-opencv .`
+
 `docker run -it rianders/rpi-opencv /bin/bash`
 
 Copy the files from the docker:
