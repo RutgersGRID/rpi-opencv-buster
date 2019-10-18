@@ -47,6 +47,15 @@ Clean up the intermediary builds:
 Copy the files from the docker:
 `docker cp $1:./rpi-openv-*.tar.gz  .`
 
+```
+479  docker cp 21878e6b1880:/opencvwork/opencv/build/OpenCV-unknown-armv7l-dev.deb .
+  480  docker cp 21878e6b1880:/opencvwork/opencv/build/OpenCV-unknown-armv7l-libs.deb .
+  481  docker cp 21878e6b1880:/opencvwork/opencv/build/OpenCV-unknown-armv7l-licenses.deb .
+  482  docker cp 21878e6b1880:/opencvwork/opencv/build/OpenCV-unknown-armv7l-main.deb .
+  483  docker cp 21878e6b1880:/opencvwork/opencv/build/OpenCV-unknown-armv7l-python.deb .
+  484  docker cp 21878e6b1880:/opencvwork/opencv/build/OpenCV-unknown-armv7l-scripts.deb .
+```
+
 
 ## Extract and Install
 `sudo tar xvzf OpenCV-unknown-armv7l.tar.gz -C /usr/local/ --strip=1`
